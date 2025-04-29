@@ -1,0 +1,30 @@
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+      // Define CORS
+      allow list, get, create, delete: if request.auth != null || 
+        request.method == 'GET' ||
+        request.method == 'OPTIONS' ||
+        isRequestFromAllowedOrigin(request);
+    }
+  }
+}
+
+// Function to check if the request is from an allowed origin
+function isRequestFromAllowedOrigin(request) {
+  // List of allowed origins
+  // Adjust the list as per your requirements
+  // For example, ['http://localhost:3000', 'https://yourdomain.com']
+  let allowedOrigins = [
+    'http://localhost:5173'
+  ];
+  
+  // Get the request origin
+  let requestOrigin = request.headers.origin;
+  
+  // Check if the request origin is included in the allowed origins list
+  return requestOrigin in allowedOrigins;
+}
